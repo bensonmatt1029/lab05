@@ -33,6 +33,7 @@ void Lander :: draw(const Thrust & thrust, ogstream & gout) const
  ***************************************************************/
 Acceleration Lander :: input(const Thrust& thrust, double gravity)
 {
+   // use radians
    pos.setX(-99.9);
    return Acceleration();
 }
