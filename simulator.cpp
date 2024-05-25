@@ -1,5 +1,6 @@
 /**********************************************************************
  * LAB 06
+ * Bro Helfrich & Daniel & Matt
  * Lunar Lander simulation. This is the Game class and main()
  **********************************************************************/
 
@@ -12,7 +13,10 @@
 #include <cmath>         // for SQRT
 #include <cassert>       // for ASSERT
 #include "star.h"        // for stars
+#include "lander.h"      // for lander
+#include "acceleration.h" // for acceleration
 using namespace std;
+
 
 
 // TODO ticket 5-7
@@ -26,19 +30,25 @@ using namespace std;
 class Simulator
 {
 public:
-    // set up the simulator
-    Simulator(const Position& posUpperRight) : ground(posUpperRight),
-        posLander(posUpperRight.getX() / 2, posUpperRight.getY() / 2) {}
+   // set up the simulator
+   // Simulator(const Position& posUpperRight) : ground(posUpperRight),
+   //    posLander(posUpperRight.getX() / 2, posUpperRight.getY() / 2) {}
+   Simulator(const Position& posUpperRight) : ground(posUpperRight),
+      lander(posUpperRight) {}
+   
 
-    // display stuff on the screen
-    void display();
+   // display stuff on the screen
+   void display();
 
-    Angle a;
-    Ground ground;
-    Position posLander;
-    //Star star;
-    Position posStar = Position(300, 300); // Default value to keep above ground
-    unsigned char phase = 0;
+   Angle a;
+   Ground ground;
+   Lander lander;
+   //Position posLander;
+   Star star;
+   vector<Position> randomStarPositions = star.genRandomPositions();
+   //Position posStar = Position(300, 300); // Default value to keep above ground
+   //unsigned char phase = 0;
+   
 };
 
 /**********************************************************
@@ -47,19 +57,21 @@ public:
  **********************************************************/
 void Simulator::display()
 {
-    ogstream gout;
+   ogstream gout;
 
-    // draw the ground
-    ground.draw(gout);
+   // draw the ground
+   ground.draw(gout);
 
-    // draw the lander
-    gout.drawLander(posLander, a.getRadians());
+   // draw the lander
+   gout.drawLander(lander.getPosition() , a.getRadians());
 
-    // draw a star
-    gout.drawStar(posStar, phase);
-    //gout.drawStar(star.getPosition(), star.getPhase());
+   // draw 50 stars
+   for (int i = 0; i < randomStarPositions.size(); i++)
+   {
+      gout.drawStar(randomStarPositions[i], star.getPhase() + i);
+   }
+   
 }
-
 
 /*************************************
  * CALLBACK
@@ -67,25 +79,31 @@ void Simulator::display()
  **************************************/
 void callBack(const Interface* pUI, void* p)
 {
-    // the first step is to cast the void pointer into a game object. This
-    // is the first step of every single callback function in OpenGL. 
-    Simulator* pSimulator = (Simulator*)p;
+   // the first step is to cast the void pointer into a game object. This
+   // is the first step of every single callback function in OpenGL. 
+   Simulator* pSimulator = (Simulator*)p;
 
-    // draw the game
-    pSimulator->display();
+   // draw the game
+   pSimulator->display();
 
-    // handle input
-    if (pUI->isLeft())
-    {
-        pSimulator->a.add(M_PI/ 10);     // rotate left
-    }
-    if (pUI->isRight())
-    {
-        pSimulator->a.add(-M_PI_2 / 4);  // rotate right
-    }
 
-    // star Phase
-    pSimulator->phase++;
+   Thrust thrust;
+   // handle input
+   if (pUI->isUp())
+   {
+      pSimulator->lander.input(thrust, -1.0);
+   }
+   if (pUI->isLeft())
+   {
+      pSimulator->a.add(M_PI/ 10);     // rotate left
+   }
+   if (pUI->isRight())
+   {
+      pSimulator->a.add(-M_PI_2 / 4);  // rotate right
+   }
+   
+   // Make starts twinkle
+   pSimulator->star.incrementPhase();
 
 }
 
@@ -97,27 +115,27 @@ void callBack(const Interface* pUI, void* p)
 #ifdef _WIN32
 #include <windows.h>
 int WINAPI WinMain(
-    _In_ HINSTANCE hInstance,
-    _In_opt_ HINSTANCE hPrevInstance,
-    _In_ LPSTR pCmdLine,
-    _In_ int nCmdShow)
+   _In_ HINSTANCE hInstance,
+   _In_opt_ HINSTANCE hPrevInstance,
+   _In_ LPSTR pCmdLine,
+   _In_ int nCmdShow)
 #else // !_WIN32
 int main(int argc, char** argv)
 #endif // !_WIN32
 {
-    // Run the unit tests
-    testRunner();
+   // Run the unit tests
+   testRunner();
 
 
-    // Initialize OpenGL
-    Position posUpperRight(400, 400);
-    Interface ui("Lunar Lander", posUpperRight);
+   // Initialize OpenGL
+   Position posUpperRight(400, 400);
+   Interface ui("Lunar Lander", posUpperRight);
 
-    // Initialize the game class
-    Simulator simulator(posUpperRight);
+   // Initialize the game class
+   Simulator simulator(posUpperRight);
 
-    // set everything into action
-    ui.run(callBack, (void*)&simulator);
+   // set everything into action
+   ui.run(callBack, (void*)&simulator);
 
-    return 0;
+   return 0;
 }

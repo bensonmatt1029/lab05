@@ -2,7 +2,7 @@
  * Header File:
  *    Thrust : Represents activation of thrusters
  * Author:
- *    Br. Helfrich
+ *    Br. Helfrich & Daniel & Matt
  * Summary:
  *    down, clockwise, and counterclockwise
  ************************************************************************/
@@ -28,10 +28,13 @@ public:
    Thrust() : mainEngine(false), clockwise(false), counterClockwise(false) {}
 
    // Get rotation in radians per second
-   double rotation() const // Put in .cpp if condensed
+   double rotation() const 
    {
-      if (clockwise && !counterClockwise) return 0.1;
-      else if (!clockwise && counterClockwise) return -0.1;
+      if (clockwise && !counterClockwise)
+         return 0.1;
+      else if (!clockwise && counterClockwise) 
+         return -0.1;
+
       return 0.0; 
    }
 
@@ -42,32 +45,17 @@ public:
    }
 
    // reflect what is firing
-   bool isMain()    const { return mainEngine; }
-   bool isClock()   const { return clockwise; }
+   bool isMain()    const { return mainEngine;       }
+   bool isClock()   const { return clockwise;        }
    bool isCounter() const { return counterClockwise; }
-
    
    // 0 or 1
    // set the thrusters
-   void set(const Interface * pUI)
+   void set(const Interface* pUI)
    {
-      mainEngine = true;
-      clockwise = true;
-      counterClockwise = true;
-
-      if (pUI->isDown() < 1 ) 
-      {
-         mainEngine = false;
-      }
-      if (pUI->isLeft() < 1)
-      {
-         clockwise = false;
-      }
-      if (pUI->isRight() < 1)
-      {
-         counterClockwise = false;
-      }
-      
+     mainEngine       = pUI->isDown()  >= 1;
+     clockwise        = pUI->isLeft()  >= 1;
+     counterClockwise = pUI->isRight() >= 1;
    }
 
 private:

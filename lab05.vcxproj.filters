@@ -45,6 +45,9 @@
     <ClCompile Include="lander.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="star.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ground.h">

@@ -2,7 +2,7 @@
  * Header File:
  *    LANDER
  * Author:
- *    Br. Helfrich
+ *    Br. Helfrich & Daniel & Matt
  * Summary:
  *    All the information about the lunar lander
  ************************************************************************/
