@@ -8,7 +8,6 @@
  ************************************************************************/
 
 #pragma once
-
 #include "uiInteract.h"  // for Interface
 
 class TestLander;
@@ -45,11 +44,10 @@ public:
    }
 
    // reflect what is firing
-   bool isMain()    const { return mainEngine;       }
-   bool isClock()   const { return clockwise;        }
-   bool isCounter() const { return counterClockwise; }
-   
-   // 0 or 1
+   bool isMain   ()   const { return mainEngine;       }
+   bool isClock  ()   const { return clockwise;        }
+   bool isCounter()   const { return counterClockwise; }
+  
    // set the thrusters
    void set(const Interface* pUI)
    {

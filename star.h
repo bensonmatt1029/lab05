@@ -13,20 +13,16 @@
 #include <random>
 #include <vector>
 
-
 /*****************************************************
  * STAR
  * A star that twinkles
  *****************************************************/
 class Star
 {
-   
-
 private:
-   Position position = Position(300, 300); // Default value to keep above ground
-   unsigned char phase = 0;                // NOTE - increment by one for each new star
+   Position position   = Position(300, 300); // Default value to keep above ground
+   unsigned char phase = 0;                  // NOTE - increment by one for each new star
    
-
 public:
    // Default Constructor
    Star() {}
@@ -35,6 +31,4 @@ public:
    unsigned char getPhase()   { return phase; }
    void incrementPhase()      { phase++; }
    std::vector<Position> genRandomPositions();
-   
-   
 };

@@ -4,24 +4,18 @@
  * Lunar Lander simulation. This is the Game class and main()
  **********************************************************************/
 
-#include "position.h"    // everything should have a point
-#include "angle.h"       // angle of the lander
-#include "uiInteract.h"  // for INTERFACE
-#include "uiDraw.h"      // for RANDOM and DRAW*
-#include "ground.h"      // for GROUND
-#include "test.h"        // for the unit tests
-#include <cmath>         // for SQRT
-#include <cassert>       // for ASSERT
-#include "star.h"        // for stars
-#include "lander.h"      // for lander
+#include "position.h"     // everything should have a point
+#include "angle.h"        // angle of the lander
+#include "uiInteract.h"   // for INTERFACE
+#include "uiDraw.h"       // for RANDOM and DRAW*
+#include "ground.h"       // for GROUND
+#include "test.h"         // for the unit tests
+#include <cmath>          // for SQRT
+#include <cassert>        // for ASSERT
+#include "star.h"         // for stars
+#include "lander.h"       // for lander
 #include "acceleration.h" // for acceleration
 using namespace std;
-
-
-
-// TODO ticket 5-7
-// draw function
-// check logic.h for thrust and lander.h
 
 /*************************************************************************
  * SIMULATOR
@@ -31,24 +25,17 @@ class Simulator
 {
 public:
    // set up the simulator
-   // Simulator(const Position& posUpperRight) : ground(posUpperRight),
-   //    posLander(posUpperRight.getX() / 2, posUpperRight.getY() / 2) {}
    Simulator(const Position& posUpperRight) : ground(posUpperRight),
       lander(posUpperRight) {}
    
-
    // display stuff on the screen
    void display();
 
    Angle a;
    Ground ground;
    Lander lander;
-   //Position posLander;
    Star star;
    vector<Position> randomStarPositions = star.genRandomPositions();
-   //Position posStar = Position(300, 300); // Default value to keep above ground
-   //unsigned char phase = 0;
-   
 };
 
 /**********************************************************
@@ -63,14 +50,13 @@ void Simulator::display()
    ground.draw(gout);
 
    // draw the lander
-   gout.drawLander(lander.getPosition() , a.getRadians());
+   gout.drawLander(lander.getPosition(), a.getRadians());
 
    // draw 50 stars
    for (int i = 0; i < randomStarPositions.size(); i++)
    {
       gout.drawStar(randomStarPositions[i], star.getPhase() + i);
    }
-   
 }
 
 /*************************************
@@ -86,25 +72,23 @@ void callBack(const Interface* pUI, void* p)
    // draw the game
    pSimulator->display();
 
-
    Thrust thrust;
    // handle input
    if (pUI->isUp())
    {
-      pSimulator->lander.input(thrust, -1.0);
+      pSimulator->lander.input(thrust, -1.0); // move the lander
    }
    if (pUI->isLeft())
    {
-      pSimulator->a.add(M_PI/ 10);     // rotate left
+      pSimulator->a.add(M_PI/ 10);            // rotate left
    }
    if (pUI->isRight())
    {
-      pSimulator->a.add(-M_PI_2 / 4);  // rotate right
+      pSimulator->a.add(-M_PI_2 / 4);         // rotate right
    }
    
-   // Make starts twinkle
+   // Make stars twinkle
    pSimulator->star.incrementPhase();
-
 }
 
 /*********************************
@@ -125,7 +109,6 @@ int main(int argc, char** argv)
 {
    // Run the unit tests
    testRunner();
-
 
    // Initialize OpenGL
    Position posUpperRight(400, 400);

@@ -8,15 +8,12 @@
  ************************************************************************/
 
 #pragma once
-#include "star.h"   // for star
+#include "star.h"       // for star
 #include "uiDraw.h"     // for RANDOM and DRAWSTAR
-#include <random>
-#include <vector>
-
+#include <random>       // for Random
+#include <vector>       // for vector
+#include <iostream>     
 using namespace std;
-
-
-
 
 /*****************************************************
 * GENRANDOMPOSITIONS
@@ -25,13 +22,14 @@ using namespace std;
 vector<Position> Star::genRandomPositions()
 {
    const int numStars = 50;
-   vector<Position> randomPositions(numStars); // Initialize with numStars elements
+   vector<Position> randomPositions(numStars);  // Initialize numStars
 
-   std::random_device rd;                             // obtain a random number from hardware
-   std::mt19937 gen(rd());                            // seed the generator
-   std::uniform_int_distribution<> distrY(300, 400);   // define the range 
-   std::uniform_int_distribution<> distrX(0, 400);
+   random_device rd;                            // obtain a random number 
+   mt19937 gen(rd());                           // seed the generator
+   uniform_int_distribution<> distrY(300, 400); // define the range 
+   uniform_int_distribution<> distrX(0, 400);
 
+   // Loop for 50 stars.
    for (int i = 0; i < numStars; i++)
    {
       randomPositions[i].setX(distrX(gen));
@@ -39,7 +37,6 @@ vector<Position> Star::genRandomPositions()
    }
 
    return randomPositions;
-
 }
 
 

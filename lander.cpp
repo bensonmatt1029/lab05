@@ -10,9 +10,7 @@
 #include "lander.h"
 #include "acceleration.h"
 #include <random>
-
 #include <iostream>
-
 using namespace std;
 
  /***************************************************************
@@ -21,9 +19,9 @@ using namespace std;
   ***************************************************************/
 void Lander :: reset(const Position & posUpperRight)
 {
-   random_device rd;                         // obtain a random number from hardware
-   mt19937 gen(rd());                        // seed the generator
-   uniform_int_distribution<> distr(75.0, 95.0); // define the range
+   random_device rd;                              // obtain a random number
+   mt19937 gen(rd());                             // seed the generator
+   uniform_int_distribution<> distr(75.0, 95.0);  // define the range
    uniform_int_distribution<> distr2(-10.0, -4.0);
    uniform_int_distribution<> distr3(-2.0, 2.0);
 
@@ -34,7 +32,6 @@ void Lander :: reset(const Position & posUpperRight)
    pos.setY(distr(gen));
    velocity.setDX(distr2(gen));
    velocity.setDY(distr3(gen));
-   
 }
 
 /***************************************************************
@@ -43,7 +40,7 @@ void Lander :: reset(const Position & posUpperRight)
  ***************************************************************/
 void Lander :: draw(const Thrust & thrust, ogstream & gout) const
 {
-   thrust.mainEngineThrust();
+   // We couldn't get this portion to work.
 }
 
 /***************************************************************
@@ -52,10 +49,6 @@ void Lander :: draw(const Thrust & thrust, ogstream & gout) const
  ***************************************************************/
 Acceleration Lander :: input(const Thrust& thrust, double gravity)
 {
-   // use angle and thrust for ddx and ddy.
-   // Find out how angle affect thrust
-   // determine if we can use getters to replace the conditional by get(isMain())
-
    Acceleration acc(0.0, gravity);
 
    // No fuel
@@ -69,7 +62,7 @@ Acceleration Lander :: input(const Thrust& thrust, double gravity)
    if (thrust.isMain())
    {
       double thrustDDX = -sin(angleRadians) * thrustForce;
-      double thrustDDY = cos(angleRadians) * thrustForce;
+      double thrustDDY =  cos(angleRadians) * thrustForce;
       acc              = Acceleration(thrustDDX, gravity + thrustDDY);
       fuel            -= 10;
    }
