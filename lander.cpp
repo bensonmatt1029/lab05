@@ -54,9 +54,11 @@ void Lander :: draw(const Thrust & thrust, ogstream & gout) const
 Acceleration Lander :: input(const Thrust& thrust, double gravity)
 {
    // use angle and thrust for ddx and ddy.
-   
+   // Find out how angle affect thrust
+   // determine if we can use getters to replace the conditional by get(isMain())
+
    Acceleration acc;
-   if (angle.getRadians() != 0.0 && thrust.isMain())
+   if (angle.getRadians() != 0.0 && thrust.isMain()) // fix conditional, or move, or remove.
    {
       acc.set(angle, thrust.mainEngineThrust());
       acc.setDDY(acc.getDDY() + gravity);
