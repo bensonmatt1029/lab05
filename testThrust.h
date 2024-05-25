@@ -39,10 +39,10 @@ public:
 
       // Setters
       set_none();
-      //set_left();
-      //set_right();
-      //set_down();
-      //set_all();
+      set_left();
+      set_right();
+      set_down();
+      set_all();
 
       report("Thrust");
    }

@@ -11,8 +11,13 @@
 #include "test.h"        // for the unit tests
 #include <cmath>         // for SQRT
 #include <cassert>       // for ASSERT
+#include "star.h"        // for stars
 using namespace std;
 
+
+// TODO ticket 5-7
+// draw function
+// check logic.h for thrust and lander.h
 
 /*************************************************************************
  * SIMULATOR
@@ -31,6 +36,7 @@ public:
     Angle a;
     Ground ground;
     Position posLander;
+    //Star star;
     Position posStar = Position(300, 300); // Default value to keep above ground
     unsigned char phase = 0;
 };
@@ -51,6 +57,7 @@ void Simulator::display()
 
     // draw a star
     gout.drawStar(posStar, phase);
+    //gout.drawStar(star.getPosition(), star.getPhase());
 }
 
 

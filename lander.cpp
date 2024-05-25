@@ -9,6 +9,11 @@
 
 #include "lander.h"
 #include "acceleration.h"
+#include <random>
+
+#include <iostream>
+
+using namespace std;
 
  /***************************************************************
   * RESET
@@ -16,7 +21,22 @@
   ***************************************************************/
 void Lander :: reset(const Position & posUpperRight)
 {
-   status = DEAD;
+   random_device rd;                         // obtain a random number from hardware
+   mt19937 gen(rd());                        // seed the generator
+   uniform_int_distribution<> distr(75.0, 95.0); // define the range
+   uniform_int_distribution<> distr2(-10.0, -4.0);
+   uniform_int_distribution<> distr3(-2.0, 2.0);
+
+
+   status = PLAYING;
+   fuel = 5000.0;
+   angle.setUp();
+   pos.setX(99.0);
+   pos.setY(distr(gen));
+   velocity.setDX(distr2(gen));
+   velocity.setDY(distr3(gen));
+   
+   
 }
 
 /***************************************************************
@@ -33,9 +53,20 @@ void Lander :: draw(const Thrust & thrust, ogstream & gout) const
  ***************************************************************/
 Acceleration Lander :: input(const Thrust& thrust, double gravity)
 {
-   // use radians
-   pos.setX(-99.9);
-   return Acceleration();
+   // use angle and thrust for ddx and ddy.
+   
+   Acceleration acc;
+   if (angle.getRadians() != 0.0 && thrust.isMain())
+   {
+      acc.set(angle, thrust.mainEngineThrust());
+      acc.setDDY(acc.getDDY() + gravity);
+      fuel -= 10;
+      //acc = Acceleration(thrust.mainEngineThrust(), thrust.mainEngineThrust() + gravity);
+   }
+   else
+      acc = Acceleration(0.0, gravity);
+  
+   return acc;
 }
 
 /******************************************************************
@@ -44,5 +75,8 @@ Acceleration Lander :: input(const Thrust& thrust, double gravity)
  *******************************************************************/
 void Lander :: coast(Acceleration & acceleration, double time)
 {
-   pos.setX(-99.9);
+   
+   pos.add(acceleration, velocity, time); // update position
+   velocity.add(acceleration, time); // update velocity
+
 }

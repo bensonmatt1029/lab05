@@ -28,12 +28,11 @@ public:
    Thrust() : mainEngine(false), clockwise(false), counterClockwise(false) {}
 
    // Get rotation in radians per second
-   double rotation() const
+   double rotation() const // Put in .cpp if condensed
    {
-      if (clockwise && counterClockwise) return 0.0;
-      else if (clockwise) return 0.1;
-      else if (counterClockwise) return -0.1;
-      else return 0.0; 
+      if (clockwise && !counterClockwise) return 0.1;
+      else if (!clockwise && counterClockwise) return -0.1;
+      return 0.0; 
    }
 
    // get main engine thrust in  m / s ^ 2

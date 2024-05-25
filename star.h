@@ -17,6 +17,20 @@
  *****************************************************/
 class Star
 {
-public:
+   
 
+private:
+   Position position = Position(300, 300); // Default value to keep above ground
+   unsigned char phase = 0; // NOTE - increment by one for each new star
+
+
+public:
+   // Default Constructor
+   Star();
+
+   Position getPosition()     { return position; }
+   unsigned char getPhase()   { return phase; }
+   void twinkle() { }
+   void genStar() { }
+   void incrementPhase() { phase++; }
 };
