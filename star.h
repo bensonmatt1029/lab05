@@ -10,8 +10,6 @@
 #pragma once
 #include "position.h"   // for POSITION
 #include "uiDraw.h"     // for RANDOM and DRAWSTAR
-#include <random>
-#include <vector>
 
 /*****************************************************
  * STAR
@@ -19,16 +17,23 @@
  *****************************************************/
 class Star
 {
-private:
-   Position position   = Position(300, 300); // Default value to keep above ground
-   unsigned char phase = 0;                  // NOTE - increment by one for each new star
-   
 public:
-   // Default Constructor
-   Star() {}
+   Star() : phase(0) {}
 
-   Position getPosition()     { return position; }
-   unsigned char getPhase()   { return phase; }
-   void incrementPhase()      { phase++; }
-   std::vector<Position> genRandomPositions();
+   // Set the location of the star field with a random phase.
+   void reset(double width, double height)
+   {
+      pos.setX(random(0.0, width ));
+      pos.setY(random(0.0, height));
+      phase = random(0, 255);
+   }
+
+   // Draw this star and increment the twinkle number.
+   void draw(ogstream& gout)
+   {
+      gout.drawStar(pos, phase++);
+   }
+private:
+   Position pos;          // the location of the star
+   unsigned char phase;   // the phase of the twinkling
 };

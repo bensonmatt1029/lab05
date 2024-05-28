@@ -9,9 +9,6 @@
 
 #include "lander.h"
 #include "acceleration.h"
-#include <random>
-#include <iostream>
-using namespace std;
 
  /***************************************************************
   * RESET
@@ -19,19 +16,22 @@ using namespace std;
   ***************************************************************/
 void Lander :: reset(const Position & posUpperRight)
 {
-   random_device rd;                              // obtain a random number
-   mt19937 gen(rd());                             // seed the generator
-   uniform_int_distribution<> distr(75.0, 95.0);  // define the range
-   uniform_int_distribution<> distr2(-10.0, -4.0);
-   uniform_int_distribution<> distr3(-2.0, 2.0);
-
-   status = PLAYING;
-   fuel = 5000.0;
+   // straight up
    angle.setUp();
-   pos.setX(99.0);
-   pos.setY(distr(gen));
-   velocity.setDX(distr2(gen));
-   velocity.setDY(distr3(gen));
+
+   // the velocity is random
+   velocity.setDX(random(-10.0, -4.0));
+   velocity.setDY(random(-2.0, 2.0  ));
+
+   // the position is at the right side of the screen
+   pos.setX(posUpperRight.getX() - 1.0);
+   pos.setY(random(posUpperRight.getY() * 0.75, posUpperRight.getY() * 0.95));
+
+   // status is playing
+   status = PLAYING;
+
+   // fill 'er up with fuel
+   fuel = FUEL_MAX;
 }
 
 /***************************************************************
@@ -40,7 +40,15 @@ void Lander :: reset(const Position & posUpperRight)
  ***************************************************************/
 void Lander :: draw(const Thrust & thrust, ogstream & gout) const
 {
-   // We couldn't get this portion to work.
+   // draw lander on the screen.
+   gout.drawLander(pos, angle.getRadians());
+
+   // only fire the engines if we are still flying
+   if (isFlying() && fuel > 0.0)
+   {
+      gout.drawLanderFlames(pos, angle.getRadians(),
+         thrust.isMain(), thrust.isClock(), thrust.isCounter());
+   }
 }
 
 /***************************************************************
@@ -49,47 +57,42 @@ void Lander :: draw(const Thrust & thrust, ogstream & gout) const
  ***************************************************************/
 Acceleration Lander :: input(const Thrust& thrust, double gravity)
 {
-   Acceleration acc(0.0, gravity);
+   // Acceleration due to gravity
+   Acceleration a;
 
-   // No fuel
-   if (fuel <= 0.0)
-      return acc;
+   // add gravity
+   a.addDDY(gravity);
 
-   double thrustForce = thrust.mainEngineThrust();
-   double angleRadians = angle.getRadians();
+   // are we out of gas?
+   if (fuel == 0.0)
+      return a;
 
-   // Main thruster
+   // main engines
    if (thrust.isMain())
    {
-      double thrustDDX = -sin(angleRadians) * thrustForce;
-      double thrustDDY =  cos(angleRadians) * thrustForce;
-      acc              = Acceleration(thrustDDX, gravity + thrustDDY);
-      fuel            -= 10;
+      double power = (LANDER_THRUST / LANDER_WEIGHT);
+      a.addDDX(-sin(angle.getRadians()) * power);
+      a.addDDY(cos(angle.getRadians()) * power);
+      fuel -= FUEL_MAIN_THRUST;
    }
 
-   // Counter Clockwise thruster
-   else if (thrust.isCounter())
+   // clockwise
+   if (thrust.isClock())
    {
-      acc.setDDY(gravity);
-      angle.setRadians(angle.getRadians() - 0.1);
-      fuel -= 1.0;
+      angle.add(0.1);
+      fuel -= FUEL_ROTATE;
    }
-
-   // Clockwise thruster
-   else if (thrust.isClock())
+   // counter clockwise
+   if (thrust.isCounter())
    {
-      acc.setDDY(gravity);
-      angle.setRadians(angle.getRadians() + 0.1);
-      fuel -= 1.0;
+      angle.add(-0.1);
+      fuel -= FUEL_ROTATE;
    }
 
-   // input_none
-   else
-   {
-      acc = Acceleration(0.0, gravity);
-   }
+   if (fuel < 0.0)
+      fuel = 0.0;
 
-   return acc;
+   return a;
 }
 
 /******************************************************************
@@ -98,7 +101,6 @@ Acceleration Lander :: input(const Thrust& thrust, double gravity)
  *******************************************************************/
 void Lander :: coast(Acceleration & acceleration, double time)
 {
-   
    pos.add(acceleration, velocity, time); // update position
    velocity.add(acceleration, time);      // update velocity
 }

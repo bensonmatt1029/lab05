@@ -15,6 +15,8 @@
 #include "star.h"         // for stars
 #include "lander.h"       // for lander
 #include "acceleration.h" // for acceleration
+#include <vector>
+#include <iostream>
 using namespace std;
 
 /*************************************************************************
@@ -25,17 +27,29 @@ class Simulator
 {
 public:
    // set up the simulator
-   Simulator(const Position& posUpperRight) : ground(posUpperRight),
-      lander(posUpperRight) {}
-   
+   Simulator(const Position& posUpperRight)
+      : ground(posUpperRight), lander(posUpperRight)
+   {
+      // Create stars
+      for (int i = 0; i < 50; i++)
+      {
+         Star star;
+         star.reset(posUpperRight.getX(), posUpperRight.getY());
+         stars.push_back(star);
+      }
+   }
+
    // display stuff on the screen
    void display();
 
-   Angle a;
+   // update the simulator for each frame
+   void update(const Interface* pUI);
+
+private:
    Ground ground;
    Lander lander;
-   Star star;
-   vector<Position> randomStarPositions = star.genRandomPositions();
+   Thrust thrust;
+   std::vector<Star> stars; // List of stars in the simulation
 };
 
 /**********************************************************
@@ -50,13 +64,45 @@ void Simulator::display()
    ground.draw(gout);
 
    // draw the lander
-   gout.drawLander(lander.getPosition(), a.getRadians());
+   lander.draw(thrust, gout);
 
    // draw 50 stars
-   for (int i = 0; i < randomStarPositions.size(); i++)
+   for (auto& star : stars)
    {
-      gout.drawStar(randomStarPositions[i], star.getPhase() + i);
+      star.draw(gout);
    }
+}
+
+/**********************************************************
+ * UPDATE
+ * Update the simulator state for each frame
+ **********************************************************/
+void Simulator::update(const Interface* pUI)
+{
+   // update the thrust based on user input
+   thrust.set(pUI);
+
+   // Get the gravity from the ground
+   double gravity = -1.0;
+
+   // Calculate the acceleration based on input and gravity
+   Acceleration acceleration = lander.input(thrust, gravity);
+
+   // Check for collision with the ground
+   if (ground.hitGround(lander.getPosition(), lander.getWidth()))
+   {
+      if (lander.getSpeed() < lander.getMaxSpeed())
+      {
+         lander.land();
+      }
+      else
+      {
+         lander.crash();
+      }
+   }
+
+   // Draw the game
+   display();
 }
 
 /*************************************
@@ -69,26 +115,8 @@ void callBack(const Interface* pUI, void* p)
    // is the first step of every single callback function in OpenGL. 
    Simulator* pSimulator = (Simulator*)p;
 
-   // draw the game
-   pSimulator->display();
-
-   Thrust thrust;
-   // handle input
-   if (pUI->isUp())
-   {
-      pSimulator->lander.input(thrust, -1.0); // move the lander
-   }
-   if (pUI->isLeft())
-   {
-      pSimulator->a.add(M_PI/ 10);            // rotate left
-   }
-   if (pUI->isRight())
-   {
-      pSimulator->a.add(-M_PI_2 / 4);         // rotate right
-   }
-   
-   // Make stars twinkle
-   pSimulator->star.incrementPhase();
+   // Update the simulator state
+   pSimulator->update(pUI);
 }
 
 /*********************************

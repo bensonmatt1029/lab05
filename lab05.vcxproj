@@ -111,7 +111,6 @@
     <ClCompile Include="lander.cpp" />
     <ClCompile Include="position.cpp" />
     <ClCompile Include="simulator.cpp" />
-    <ClCompile Include="star.cpp" />
     <ClCompile Include="test.cpp" />
     <ClCompile Include="uiDraw.cpp" />
     <ClCompile Include="uiInteract.cpp" />
