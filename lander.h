@@ -79,10 +79,10 @@ public:
       angle.setDown(); 
       status = DEAD; 
    }
-   Position pos;         // the location of the lander
+   //Position pos;         // the location of the lander
 private:
    Status   status;      // are we dead or not?
-   //Position pos;         // the location of the lander
+   Position pos;         // the location of the lander
    Velocity velocity;    // the speed of the lander
    Angle    angle;       // the orientation of the lander
    double   fuel;        // amount of fuel remaining

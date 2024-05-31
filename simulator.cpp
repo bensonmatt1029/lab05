@@ -95,13 +95,15 @@ void Simulator::update(const Interface* pUI)
    // Calculate the acceleration based on input and gravity
    Acceleration acceleration = lander.input(thrust, gravity);
 
+   //lander move test
+   /******
+   * update position every frame for main thrusters.
+   *****/
    Velocity vel(10, 10);
    Position newPos = lander.getPosition();
    newPos.add(acceleration, vel, 0.01);
-   lander.pos = newPos;
+   //lander.pos = newPos;
 
-
-   //lander move test
    lander.coast(acceleration, 0.01);
 
    // Check for collision with the ground
