@@ -71,6 +71,13 @@ void Simulator::display()
    {
       star.draw(gout);
    }
+   
+   // display the fuel, altitude, and speed
+   Position pos(20, 350);
+   gout.setPosition(pos);
+   gout << "Fuel: "     << lander.getFuel()            << endl;
+   gout << "Altitude: " << lander.getPosition().getY() << endl;
+   gout << "Speed: "    << lander.getSpeed()           << endl;
 }
 
 /**********************************************************
@@ -87,6 +94,15 @@ void Simulator::update(const Interface* pUI)
 
    // Calculate the acceleration based on input and gravity
    Acceleration acceleration = lander.input(thrust, gravity);
+
+   Velocity vel(10, 10);
+   Position newPos = lander.getPosition();
+   newPos.add(acceleration, vel, 0.01);
+   lander.pos = newPos;
+
+
+   //lander move test
+   lander.coast(acceleration, 0.01);
 
    // Check for collision with the ground
    if (ground.hitGround(lander.getPosition(), lander.getWidth()))

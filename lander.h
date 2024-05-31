@@ -41,48 +41,48 @@ class Lander
    friend TestLander;
    
 public:
-  // to create a lander, we need to know something about the board
+   // to create a lander, we need to know something about the board
    Lander(const Position& posUpperRight) : status(PLAYING) { reset(posUpperRight); }
 
-  // reset the lander and its position
-  void reset(const Position& posUpperRight);
+   // reset the lander and its position
+   void reset(const Position& posUpperRight);
 
-  // get the status of the lander
-  bool     isDead()         const { return status == DEAD;      }
-  bool     isLanded()       const { return status == SAFE;      }
-  bool     isFlying()       const { return status == PLAYING;   }
-  Position getPosition()    const { return pos;                 }
-  double   getSpeed()       const { return velocity.getSpeed(); }
-  int      getFuel()        const { return (int)fuel;           }
-  int      getWidth()       const { return LANDER_WIDTH;        }
-  double   getMaxSpeed()    const { return MAX_SPEED;           }
+   // get the status of the lander
+   bool     isDead()         const { return status == DEAD;      }
+   bool     isLanded()       const { return status == SAFE;      }
+   bool     isFlying()       const { return status == PLAYING;   }
+   Position getPosition()    const { return pos;                 }
+   double   getSpeed()       const { return velocity.getSpeed(); }
+   int      getFuel()        const { return (int)fuel;           }
+   int      getWidth()       const { return LANDER_WIDTH;        }
+   double   getMaxSpeed()    const { return MAX_SPEED;           }
 
-  // draw the lander on the screen
-  void draw(const Thrust & thrust, ogstream & gout) const;
+   // draw the lander on the screen
+   void draw(const Thrust & thrust, ogstream & gout) const;
  
-  // handle input
-  Acceleration input(const Thrust & thrust, double gravity);
+   // handle input
+   Acceleration input(const Thrust & thrust, double gravity);
 
-  // what happens when we coast?
-  void coast(Acceleration & acceleration, double time);
+   // what happens when we coast?
+   void coast(Acceleration & acceleration, double time);
 
-  // straighten the lander and put it on the ground
-  void land() 
-  { 
-     angle.setUp(); 
-     status = SAFE;
-  }
+   // straighten the lander and put it on the ground
+   void land() 
+   { 
+      angle.setUp(); 
+      status = SAFE;
+   }
 
-  // we are dead. Draw the lander upside down
-  void crash() 
-  { 
-     angle.setDown(); 
-     status = DEAD; 
-  }
-
+   // we are dead. Draw the lander upside down
+   void crash() 
+   { 
+      angle.setDown(); 
+      status = DEAD; 
+   }
+   Position pos;         // the location of the lander
 private:
    Status   status;      // are we dead or not?
-   Position pos;         // the location of the lander
+   //Position pos;         // the location of the lander
    Velocity velocity;    // the speed of the lander
    Angle    angle;       // the orientation of the lander
    double   fuel;        // amount of fuel remaining
