@@ -19,6 +19,9 @@
 #include <iostream>
 using namespace std;
 
+#define GRAVITY = -1.0;
+#define GAMESIZE = Position pos(400,400);
+
 /*************************************************************************
  * SIMULATOR
  * Everything pertaining to the simulator.
@@ -60,67 +63,158 @@ void Simulator::display()
 {
    ogstream gout;
 
-   // draw the ground
-   ground.draw(gout);
-
-   // draw the lander
-   lander.draw(thrust, gout);
-
    // draw 50 stars
    for (auto& star : stars)
    {
       star.draw(gout);
    }
    
+   // draw the ground
+   ground.draw(gout);
+
+   // draw the lander
+   lander.draw(thrust, gout);
+
    // display the fuel, altitude, and speed
-   Position pos(20, 350);
-   gout.setPosition(pos);
+   gout = Position(20, 350);
    gout << "Fuel: "     << lander.getFuel()            << endl;
-   gout << "Altitude: " << lander.getPosition().getY() << endl;
+   gout << "Altitude: " << ground.getElevation(lander.getPosition()) << endl;
    gout << "Speed: "    << lander.getSpeed()           << endl;
+
+   if (lander.isLanded())
+   {
+      gout = Position(190, 300);
+      gout << "The Eagle has landed! ";
+   }
+
+   if (lander.isDead())
+   {
+      gout = Position(190, 300);
+      gout << "Houston, we have a problem... ";
+   }
 }
 
 /**********************************************************
  * UPDATE
  * Update the simulator state for each frame
  **********************************************************/
+//void Simulator::update(const Interface* pUI)
+//{
+//   // update the thrust based on user input
+//   thrust.set(pUI);
+//
+//   // Get the gravity from the ground
+//   double gravity = -1.0;
+//
+//   // Calculate the acceleration based on input and gravity
+//   Acceleration acceleration = lander.input(thrust, gravity);
+//
+//   // Calculate the position based on acceleration, velocity, and time
+//   //Position position = lander.getPosition()
+//
+//   //lander move test
+//   /******
+//   * update position every frame for main thrusters.
+//   *****/
+//   //Velocity vel(10, 10);
+//   //Position newPos = lander.getPosition();
+//   //newPos.add(acceleration, vel, 0.01);
+//   //lander.pos = newPos;
+//
+//   //lander.coast(acceleration, 0.01);
+//
+//   // Check for collision with the ground
+//   if (ground.hitGround(lander.getPosition(), lander.getWidth()))
+//   {
+//      if (lander.getSpeed() < lander.getMaxSpeed())
+//      {
+//         lander.land();
+//      }
+//      else
+//      {
+//         lander.crash();
+//      }
+//   }
+//
+//   // Draw the game
+//   display();
+//}
+
 void Simulator::update(const Interface* pUI)
 {
-   // update the thrust based on user input
+   ogstream gout;
+   
+   // Update the thrust based on user input
    thrust.set(pUI);
 
-   // Get the gravity from the ground
-   double gravity = -1.0;
+   // Define gravity constant (downwards force)
+   const double gravity = -1.0;  
 
-   // Calculate the acceleration based on input and gravity
+   // Calculate the acceleration based on thrust input and gravity
    Acceleration acceleration = lander.input(thrust, gravity);
 
-   //lander move test
-   /******
-   * update position every frame for main thrusters.
-   *****/
-   Velocity vel(10, 10);
-   Position newPos = lander.getPosition();
-   newPos.add(acceleration, vel, 0.01);
-   //lander.pos = newPos;
+   // Update the lander's velocity based on the calculated acceleration and the time step
+   //double timeStep = 0.1;  // Time step for each frame
+   double timeStep = 1.0 / 30.0; // Time step for each frame at 30 fps
+   timeStep *= 3.0; // Account for 3x speed
 
-   lander.coast(acceleration, 0.01);
+   // Update the lander's position based on its velocity and the time step
+   if (lander.isFlying())
+   {
+      lander.coast(acceleration, timeStep);
+   }
 
    // Check for collision with the ground
    if (ground.hitGround(lander.getPosition(), lander.getWidth()))
    {
+      lander.crash();
+   }
+   
+   // Check for collision with the landing pad
+   if (ground.onPlatform(lander.getPosition(), lander.getWidth()))
+   {
+      // If you land at a safe speed
       if (lander.getSpeed() < lander.getMaxSpeed())
       {
-         lander.land();
+         lander.land(); 
       }
+      // If you land too fast
       else
       {
          lander.crash();
       }
    }
+   
+   // reset the lander if the player chooses after a win/loss.
+   if (lander.isDead() || lander.isLanded())
+   {
+      if (thrust.isMain())
+      {
+         Position posUpperRight(400, 400); // ?? 
+         lander.reset(posUpperRight);
+         ground.reset();
+         for (auto& star : stars) 
+         {
+            star.reset(400, 400); // maybe take out default values
+         }
+      }
+   }
 
-   // Draw the game
+   // Draw the updated game state
    display();
+}
+
+// Do we need this?
+/*************************************
+ * GAMEPLAY
+ * Handle the gameplay
+ **************************************/
+void gameplay(Thrust& thrust, Lander & lander)
+{
+   if (lander.isFlying()) 
+   {
+      return;
+   }
 }
 
 /*************************************
@@ -135,6 +229,8 @@ void callBack(const Interface* pUI, void* p)
 
    // Update the simulator state
    pSimulator->update(pUI);
+
+
 }
 
 /*********************************

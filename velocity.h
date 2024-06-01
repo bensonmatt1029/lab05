@@ -48,6 +48,7 @@ public:
    void addDY(double dy) { this->dy += dy; }
    void add(const Acceleration& acceleration, double time);
 
+
 private:
    double dx;           // horizontal velocity
    double dy;           // vertical velocity
