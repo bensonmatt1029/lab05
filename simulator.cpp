@@ -15,12 +15,11 @@
 #include "star.h"         // for stars
 #include "lander.h"       // for lander
 #include "acceleration.h" // for acceleration
-#include <vector>         // for stars
+#include <vector>         // for star
 using namespace std;
 
 #define GRAVITY -1.625    // for acceleration
 #define TIME 0.1          // for speed of gameplay
-#define GAMESIZE Position(400, 400) // for game window size
 
 /*************************************************************************
  * SIMULATOR
@@ -57,7 +56,6 @@ private:
    Thrust thrust;
    vector<Star> stars; // List of stars in the simulation
 };
-
 
 /**********************************************************
  * DISPLAY
@@ -156,12 +154,12 @@ void Simulator::gameplay(const Interface* pUI)
    // Reset the game from anywhere by pressing space
    if (pUI->isSpace())
    {
-      //Position posUpperRight(400, 400); // ?? 
-      lander.reset(GAMESIZE);
+      Position posUpperRight(400, 400); // ?? 
+      lander.reset(posUpperRight);
       ground.reset();
       for (auto& star : stars)
       {
-         star.reset(GAMESIZE.getX(), GAMESIZE.getY()); // maybe take out default values
+         star.reset(400, 400); // maybe take out default values
       }
    }
 }
