@@ -81,13 +81,13 @@ void Simulator::display()
    gout.setf(ios::fixed);     // for double precision
    
    // display the fuel, altitude, and speed
-   gout << "Fuel: " << lander.getFuel()
+   gout << "Fuel: "     << lander.getFuel()
         << endl;
    gout.precision(0);
    gout << "Altitude: " << floor(ground.getElevation(lander.getPosition()))
         << endl;
    gout.precision(2);
-   gout << "Speed: " << lander.getSpeed()
+   gout << "Speed: "    << lander.getSpeed()
         << endl;
 
    // Display landing message
@@ -114,7 +114,7 @@ void Simulator::update(const Interface* pUI)
    // Update the thrust based on user input
    thrust.set(pUI);
 
-   // Calculate the acceleration based on thrust input and gravity
+   // Calculate the acceleration based on thrust, input, and gravity
    Acceleration acceleration = lander.input(thrust, GRAVITY);
 
    // Update the lander's position based on its acceleration and the time step
@@ -154,12 +154,12 @@ void Simulator::gameplay(const Interface* pUI)
    // Reset the game from anywhere by pressing space
    if (pUI->isSpace())
    {
-      Position posUpperRight(400, 400); // ?? 
+      Position posUpperRight(400, 400);  
       lander.reset(posUpperRight);
       ground.reset();
       for (auto& star : stars)
       {
-         star.reset(400, 400); // maybe take out default values
+         star.reset(400, 400); 
       }
    }
 }
