@@ -15,11 +15,12 @@
 #include "star.h"         // for stars
 #include "lander.h"       // for lander
 #include "acceleration.h" // for acceleration
-#include <vector>
-#include <iostream>
+#include <vector>         // for stars
 using namespace std;
 
-#define GRAVITY = -1.625;
+#define GRAVITY -1.625    // for acceleration
+#define TIME 0.1          // for speed of gameplay
+#define GAMESIZE Position(400, 400) // for game window size
 
 /*************************************************************************
  * SIMULATOR
@@ -78,14 +79,18 @@ void Simulator::display()
    // draw the lander
    lander.draw(thrust, gout);
 
+   gout = Position(20, 350);  // set position of messages
+   gout.setf(ios::fixed);     // for double precision
+   
    // display the fuel, altitude, and speed
-   gout = Position(20, 350);
-   gout << "Fuel: "     << lander.getFuel()            << endl;
-   gout.setf(ios::fixed);
+   gout << "Fuel: " << lander.getFuel()
+        << endl;
    gout.precision(0);
-   gout << "Altitude: " << floor(ground.getElevation(lander.getPosition())) << endl;
+   gout << "Altitude: " << floor(ground.getElevation(lander.getPosition()))
+        << endl;
    gout.precision(2);
-   gout << "Speed: "    << lander.getSpeed()           << endl;
+   gout << "Speed: " << lander.getSpeed()
+        << endl;
 
    // Display landing message
    if (lander.isLanded())
@@ -107,31 +112,24 @@ void Simulator::display()
  * Update the simulator state for each frame
  **********************************************************/
 void Simulator::update(const Interface* pUI)
-{  
+{
    // Update the thrust based on user input
    thrust.set(pUI);
 
-   // Define gravity constant (downwards force)
-   const double gravity = -1.625;  // use global instead
-
    // Calculate the acceleration based on thrust input and gravity
-   Acceleration acceleration = lander.input(thrust, gravity);
+   Acceleration acceleration = lander.input(thrust, GRAVITY);
 
-   // Update the lander's velocity based on the calculated acceleration and the time step
-   //double timeStep = 0.1;  // Time step for each frame
-   double timeStep = 1.0 / 30.0; // Time step for each frame at 30 fps
-   timeStep *= 3.0; // Account for 3x speed, show 10fps
-
-   // Update the lander's position based on its velocity and the time step
+   // Update the lander's position based on its acceleration and the time step
    if (lander.isFlying())
    {
-      lander.coast(acceleration, timeStep);
+      lander.coast(acceleration, TIME);
    }
 }
 
 /************************************************
  * GAMEPLAY
- * Handle the gameplay rules based on user input
+ * Handle the gameplay rules based on user input,
+ * lander position, and lander speed
  ************************************************/
 void Simulator::gameplay(const Interface* pUI)
 {
@@ -158,16 +156,15 @@ void Simulator::gameplay(const Interface* pUI)
    // Reset the game from anywhere by pressing space
    if (pUI->isSpace())
    {
-      Position posUpperRight(400, 400); // ?? 
-      lander.reset(posUpperRight);
+      //Position posUpperRight(400, 400); // ?? 
+      lander.reset(GAMESIZE);
       ground.reset();
       for (auto& star : stars)
       {
-         star.reset(400, 400); // maybe take out default values
+         star.reset(GAMESIZE.getX(), GAMESIZE.getY()); // maybe take out default values
       }
    }
 }
-
 
 /*************************************
  * CALLBACK
@@ -187,8 +184,6 @@ void callBack(const Interface* pUI, void* p)
 
    // Draw the updated game state
    pSimulator->display();
-
-
 }
 
 /*********************************
