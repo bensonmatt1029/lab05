@@ -19,8 +19,7 @@
 #include <iostream>
 using namespace std;
 
-#define GRAVITY = -1.0;
-#define GAMESIZE = Position pos(400,400);
+#define GRAVITY = -1.625;
 
 /*************************************************************************
  * SIMULATOR
