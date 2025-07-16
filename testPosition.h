@@ -2,7 +2,7 @@
  * Header File:
  *    TEST POSITION
  * Author:
- *    Br. Helfrich
+ *    Matt Benson
  * Summary:
  *    Unit tests for the Position class.
  ************************************************************************/
@@ -29,12 +29,6 @@ public:
       constructor_copy();
       getX();
       getY();
-      equals_equals();
-      equals_xDifferent();
-      equals_yDifferent();
-      notEquals_equals();
-      notEquals_xDifferent();
-      notEquals_yDifferent();
 
       // Ticket 4: Add
       addX_zero();
@@ -136,7 +130,7 @@ private:
       double x = 99.9;
 
       // exercise
-      x = pos.getX();
+      x = pos.getMetersX();
 
       // verify
       assertEquals(pos.x, 2.3);
@@ -157,174 +151,12 @@ private:
       double y = 99.9;
 
       // exercise
-      y = pos.getY();
+      y = pos.getMetersY();
 
       // verify
       assertEquals(pos.x, 2.3);
       assertEquals(pos.y, 4.5);
       assertEquals(y, 4.5);
-   }  // teardown
-
-   /*****************************************************************
-    *****************************************************************
-    * COMPARISION
-    *****************************************************************
-    *****************************************************************/
- 
-   /*********************************************
-    * name:    EQUALS - SAME
-    * input:   posRHS=(2.3, 4.5) posLHS=(2.3, 4.5)
-    * output:  true
-    *********************************************/
-   void equals_equals()
-   {  // setup
-      Position posRHS;
-      posRHS.x = 2.3;
-      posRHS.y = 4.5;
-      Position posLHS;
-      posLHS.x = 2.3;
-      posLHS.y = 4.5;
-      bool result = false;
-
-      // exercise
-      result = (posLHS == posRHS);
-
-      // verify
-      assertUnit(result == true);
-      assertEquals(posRHS.x, 2.3);
-      assertEquals(posRHS.y, 4.5);
-      assertEquals(posLHS.x, 2.3);
-      assertEquals(posLHS.y, 4.5);
-   }  // teardown
-
-   /*********************************************
-    * name:    EQUALS - X IS DIFFERENT
-    * input:   posRHS=(99.9, 4.5) posLHS=(2.3, 4.5)
-    * output:  false
-    *********************************************/
-   void equals_xDifferent()
-   {  // setup
-      Position posRHS;
-      posRHS.x = 99.99;
-      posRHS.y = 4.5;
-      Position posLHS;
-      posLHS.x = 2.3;
-      posLHS.y = 4.5;
-      bool result = true;
-
-      // exercise
-      result = (posLHS == posRHS);
-
-      // verify
-      assertUnit(result == false);
-      assertEquals(posRHS.x, 99.99);
-      assertEquals(posRHS.y, 4.5);
-      assertEquals(posLHS.x, 2.3);
-      assertEquals(posLHS.y, 4.5);
-   }  // teardown
-
-   /*********************************************
-    * name:    EQUALS - Y IS DIFFERENT
-    * input:   posRHS=(2.3, 99.9) posLHS=(2.3, 4.5)
-    * output:  false
-    *********************************************/
-   void equals_yDifferent()
-   {  // setup
-      Position posRHS;
-      posRHS.x = 2.3;
-      posRHS.y = 99.99;
-      Position posLHS;
-      posLHS.x = 2.3;
-      posLHS.y = 4.5;
-      bool result = true;
-
-      // exercise
-      result = (posLHS == posRHS);
-
-      // verify
-      assertUnit(result == false);
-      assertEquals(posRHS.x, 2.3);
-      assertEquals(posRHS.y, 99.99);
-      assertEquals(posLHS.x, 2.3);
-      assertEquals(posLHS.y, 4.5);
-   }  // teardown
-
-   /*********************************************
-    * name:    NOT EQUALS - SAME
-    * input:   posRHS=(2.3, 4.5) posLHS=(2.3, 4.5)
-    * output:  false
-    *********************************************/
-   void notEquals_equals()
-   {  // setup
-      Position posRHS;
-      posRHS.x = 2.3;
-      posRHS.y = 4.5;
-      Position posLHS;
-      posLHS.x = 2.3;
-      posLHS.y = 4.5;
-      bool result = true;
-
-      // exercise
-      result = (posLHS != posRHS);
-
-      // verify
-      assertUnit(result == false);
-      assertEquals(posRHS.x, 2.3);
-      assertEquals(posRHS.y, 4.5);
-      assertEquals(posLHS.x, 2.3);
-      assertEquals(posLHS.y, 4.5);
-   }  // teardown
-
-   /*********************************************
-    * name:    NOT EQUALS - X IS DIFFERENT
-    * input:   posRHS=(99.9, 4.5) posLHS=(2.3, 4.5)
-    * output:  true
-    *********************************************/
-   void notEquals_xDifferent()
-   {  // setup
-      Position posRHS;
-      posRHS.x = 99.99;
-      posRHS.y = 4.5;
-      Position posLHS;
-      posLHS.x = 2.3;
-      posLHS.y = 4.5;
-      bool result = false;
-
-      // exercise
-      result = (posLHS != posRHS);
-
-      // verify
-      assertUnit(result == true);
-      assertEquals(posRHS.x, 99.99);
-      assertEquals(posRHS.y, 4.5);
-      assertEquals(posLHS.x, 2.3);
-      assertEquals(posLHS.y, 4.5);
-   }  // teardown
-
-   /*********************************************
-    * name:    NOT EQUALS - Y IS DIFFERENT
-    * input:   posRHS=(2.3, 99.9) posLHS=(2.3, 4.5)
-    * output:  true
-    *********************************************/
-   void notEquals_yDifferent()
-   {  // setup
-      Position posRHS;
-      posRHS.x = 2.3;
-      posRHS.y = 99.99;
-      Position posLHS;
-      posLHS.x = 2.3;
-      posLHS.y = 4.5;
-      bool result = false;
-
-      // exercise
-      result = (posLHS != posRHS);
-
-      // verify
-      assertUnit(result == true);
-      assertEquals(posRHS.x, 2.3);
-      assertEquals(posRHS.y, 99.99);
-      assertEquals(posLHS.x, 2.3);
-      assertEquals(posLHS.y, 4.5);
    }  // teardown
 
    /*****************************************************************
@@ -347,7 +179,7 @@ private:
       double x = 0.0;
 
       // exercise
-      pos.addX(x);
+      pos.addMetersX(x);
 
       // verify
       assertEquals(pos.x, 2.3);
@@ -368,7 +200,7 @@ private:
       double x = 4.1;
 
       // exercise
-      pos.addX(x);
+      pos.addMetersX(x);
 
       // verify
       assertEquals(pos.x, 6.4);
@@ -389,7 +221,7 @@ private:
       double y = 0.0;
 
       // exercise
-      pos.addY(y);
+      pos.addMetersY(y);
 
       // verify
       assertEquals(pos.x, 2.3);
@@ -410,7 +242,7 @@ private:
       double y = 4.1;
 
       // exercise
-      pos.addY(y);
+      pos.addMetersY(y);
 
       // verify
       assertEquals(pos.x, 2.3);

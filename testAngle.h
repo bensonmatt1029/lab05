@@ -2,7 +2,7 @@
  * Header File:
  *    TEST ANGLE
  * Author:
- *    Br. Helfrich
+ *    Matt Benson
  * Summary:
  *    All the unit tests for ANGLE
  ************************************************************************/

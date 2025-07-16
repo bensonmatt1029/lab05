@@ -2,7 +2,7 @@
  * Header File:
  *    TEST ACCELERATION
  * Author:
- *    Br. Helfrich
+ *    Matt Benson
  * Summary:
  *    Unit tests for the Acceleration class.
  ************************************************************************/

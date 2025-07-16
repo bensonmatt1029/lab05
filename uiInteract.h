@@ -21,9 +21,9 @@
 using std::min;
 using std::max;
 
-// for unit test
-class TestThrust;
+#define GL_SILENCE_DEPRECATION
 
+class TestThrust;
 
 /********************************************
  * INTERFACE
@@ -32,23 +32,23 @@ class TestThrust;
  ********************************************/
 class Interface
 {
-   // for unit test
+public:
    friend TestThrust;
 
-public:
-   // Default constructor useful for setting up the random variables
-   // or for opening the file for output
-   Interface() {  }
+   Interface() {}
 
    // Constructor if you want to set up the window with anything but
    // the default parameters
-   Interface(const char * title, const Position & ptUpperRight)
+   Interface(int argc, char** argv, const char* title, const Position& ptUpperRight)
    {
-      initialize(title, ptUpperRight);
+      initialize(argc, argv, title, ptUpperRight);
    }
 
+   // Destructor, in case any housecleaning needs to occur
+   ~Interface();
+
    // This will set the game in motion
-   void run(void (*callBack)(const Interface *, void *), void *p);
+   void run(void (*callBack)(const Interface*, void*), void* p);
 
    // Is it time to redraw the screen
    bool isTimeToDraw();
@@ -61,31 +61,33 @@ public:
 
    // How many frames per second are we configured for?
    void setFramesPerSecond(double value);
-   
+
    // Key event indicating a key has been pressed or not.  The callbacks
    // should be the only onces to call this
    void keyEvent(int key, bool fDown);
    void keyEvent();
 
    // Current frame rate
-   double frameRate() const { return timePeriod;   }
-   
+   double frameRate() const { return timePeriod; }
+
    // Get various key events
-   int  isDown()      const { return isDownPress;  }
-   int  isUp()        const { return isUpPress;    }
-   int  isLeft()      const { return isLeftPress;  }
+   int  isDown()      const { return isDownPress; }
+   int  isUp()        const { return isUpPress; }
+   int  isLeft()      const { return isLeftPress; }
    int  isRight()     const { return isRightPress; }
    bool isSpace()     const { return isSpacePress; }
-   bool isQ()         const { return isQPress;     }
-   
-   static void *p;                   // for client
-   static void (*callBack)(const Interface *, void *);
+   bool isP() const { return isPPress; }
+   bool isR() const { return isRPress; }
+   bool isEsc() const { return isEscPress; }
+
+   static void* p;                   // for client
+   static void (*callBack)(const Interface*, void*);
 
 private:
-   void initialize(const char * title, const Position & ptUpperRight);
+   void initialize(int argc, char** argv, const char* title, const Position& ptUpperRight);
 
-   static bool          initialized;  // only run the constructor once!
-   static double        timePeriod;   // interval between frame draws
+   static bool         initialized;  // only run the constructor once!
+   static double       timePeriod;   // interval between frame draws
    static unsigned long nextTick;     // time (from clock()) of our next draw
 
    static int  isDownPress;          // is the down arrow currently pressed?
@@ -93,7 +95,9 @@ private:
    static int  isLeftPress;          //    "   left       "
    static int  isRightPress;         //    "   right      "
    static bool isSpacePress;         //    "   space      "
-   static bool isQPress;             //     "  q          "
+   static bool isPPress;
+   static bool isRPress;
+   static bool isEscPress;
 };
 
 
@@ -103,7 +107,7 @@ private:
  * This is the main callback from OpenGL. It gets called constantly by
  * the graphics engine to refresh and draw the window.  Here we will
  * clear the background buffer, draw on it, and send it to the forefront
- * when the appropriate time period has passsed.
+ * when the appropriate time period has passed.
  *
  * Note: This and all other callbacks can't be member functions, they must
  * have global scope for OpenGL to see them.
@@ -113,7 +117,7 @@ void drawCallback();
 /************************************************************************
  * KEY DOWN CALLBACK
  * When a key on the keyboard has been pressed, we need to pass that
- * on to the client.  Currnetly, we are only registering the arrow keys
+ * on to the client.  Currently, we are only registering the arrow keys
  *************************************************************************/
 void keyDownCallback(int key, int x, int y);
 

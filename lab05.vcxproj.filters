@@ -42,7 +42,13 @@
     <ClCompile Include="simulator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="lander.cpp">
+    <ClCompile Include="airplane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="physics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cloud.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -83,10 +89,7 @@
     <ClInclude Include="testAngle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="lander.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="testLander.h">
+    <ClInclude Include="airplane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="testThrust.h">
@@ -95,14 +98,14 @@
     <ClInclude Include="thrust.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="star.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="acceleration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <ClInclude Include="physics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cloud.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

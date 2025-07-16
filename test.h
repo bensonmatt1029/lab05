@@ -2,7 +2,7 @@
  * Header File:
  *    TEST
  * Author:
- *    Br. Helfrich
+ *    Matt Benson
  * Summary:
  *    The test runner
  ************************************************************************/

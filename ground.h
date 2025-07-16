@@ -2,9 +2,9 @@
  * Header File:
  *    GROUND
  * Author:
- *    Br. Helfrich
+ *    Matt Benson
  * Summary:
- *    Where the ground is located and where the landing pad is located
+ *    Where the ground is located and where the runway is
  ************************************************************************/
 
 #pragma once
@@ -32,11 +32,13 @@ public:
    // determine how high the Point is off the ground
    double getElevation(const Position & pos) const
    {
-      if (pos.getX() >= 0.0 && pos.getX() < posUpperRight.getX())
-         return pos.getY() - ground[(int)pos.getX()];
+      if (pos.getMetersX() >= 0.0 && pos.getMetersX() < posUpperRight.getMetersX())
+         return pos.getMetersY() - ground[(int)pos.getMetersX()];
       else
          return 0.0;
    }
+
+   Position getPlatformCenter() const;
 
    // on the platform
    bool onPlatform(const Position& position, int landerWidth) const;
@@ -47,5 +49,6 @@ public:
 private:
    double * ground;               // the ground array, expressed in elevation 
    long    iLZ;                   // the left-most location of the landing zone (LZ)
+   long runwayWidth;
    Position posUpperRight;        // the width and height of the world
 };

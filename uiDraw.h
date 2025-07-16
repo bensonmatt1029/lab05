@@ -15,76 +15,108 @@
 #include <string>     // To display text on the screen
 #include <cmath>      // for M_PI, sin() and cos()
 #include <algorithm>  // used for min() and max()
-#include <sstream>    // for OSTRINGSTRING
 #include "position.h" // Where things are drawn
 using std::string;
 using std::min;
 using std::max;
 
+#include <sstream>
+
+
+#define GL_SILENCE_DEPRECATION
 
 /*************************************************************************
  * GRAPHICS STREAM
- * A graphics stream that behaves much like COUT except on a drawn screen.
- * Special methods are added to facilitate drawing simulator elements.
+ * A graphics stream that behaves much like COUT except on a drawn screen
  *************************************************************************/
 class ogstream : public std::ostringstream
 {
 public:
-   ogstream()                    : pos()    {          }
-   ogstream(const Position& pos) : pos(pos) {          }
-   ~ogstream()                              { flush(); }
-   
-   // Methods specific to drawing text on the screen
-   void flush();
-   void setPosition(const Position& pos) { flush(); this->pos = pos; }
-   ogstream& operator = (const Position& pos)
+   ogstream() {}
+   ogstream(const Position& pt) : pt(pt) {}
+   ~ogstream() { flush(); };
+
+   // This is mostly for the text drawing stuff
+   virtual void flush();
+   virtual void setPosition(const Position& pt) { flush(); this->pt = pt; }
+   virtual ogstream& operator = (const Position& pt)
    {
-      setPosition(pos);
+      setPosition(pt);
       return *this;
    }
-   
-   // Methods specific to drawing simulator elements on the screen
-   virtual void drawLander(      const Position& pos = Position(),
-                                 double angle = 0.0);
 
-   virtual void drawLanderFlames(const Position& pos = Position(),
-                                 double angle = 0.0,
-                                 bool bottom = false,
-                                 bool left   = false,
-                                 bool right  = false);
+   // This is specific to the orbit simulator
+   virtual void drawShip(const Position& center, double rotation, bool thrust);
 
-   virtual void drawStar(        const Position& pt = Position(),
-                                 unsigned char phase = 0);
+   virtual void drawRectangle(const Position& posBegin,
+      const Position& posEnd,
+      double red = 1.0,
+      double green = 1.0,
+      double blue = 1.0) const;
 
-   virtual void drawRectangle(   const Position & posBegin,
-                                 const Position & posEnd,
-                                 double red    = 1.0,
-                                 double green  = 1.0,
-                                 double blue   = 1.0) const;
+   virtual void drawLine(const Position& posBegin,
+      const Position& posEnd,
+      double red = 1.0,
+      double green = 1.0,
+      double blue = 1.0) const;
 
-   virtual void drawLine(        const Position & posBegin,
-                                 const Position & posEnd,
-                                 double red   = 1.0,
-                                 double green = 1.0,
-                                 double blue  = 1.0) const;
+   virtual void drawCircle(const Position& center,
+      double radius,
+      double red = 1.0,
+      double green = 1.0,
+      double blue = 1.0) const;
+   virtual void drawControlTower(const Position& base, double height);
 protected:
-   Position pos;
-   
-private:
-   Position rotate(const Position & posOrigin, double x, double y,
-                   double rotation = 0.0) const;
-   
-   void drawText(const Position & posTopLeft, const char * text) const;
+   Position pt;
+};
+
+/*************************************************************************
+ * GRAPHICS STREAM DUMMY
+ * Better not be called!
+ *************************************************************************/
+class ogstreamDummy : public ogstream
+{
+public:
+   ogstreamDummy(const Position& pt) {}
+   ~ogstreamDummy() {}
+
+   // This is mostly for the text drawing stuff
+   void flush();
+   void setPosition(const Position& pt);
+   ogstreamDummy& operator = (const Position& pt);
+
+   // This is specific to the orbit simulator
+   void drawShip(const Position& center, double rotation, bool thrust);
+};
+
+/*************************************************************************
+ * GRAPHICS STREAM Fake
+ * Better not be called!
+ *************************************************************************/
+class ogstreamFake : public ogstream
+{
+public:
+   ogstreamFake(const Position& pt) {}
+   ~ogstreamFake() {}
+
+   // This is mostly for the text drawing stuff
+   void flush();
+   void setPosition(const Position& pt);
+   ogstreamFake& operator = (const Position& pt);
+
+   // This is specific to the orbit simulator
+   void drawShip(const Position& center, double rotation, bool thrust);
 
 };
 
 /******************************************************************
  * RANDOM
  * This function generates a random number.  The user specifies
- * The parameters 
+ * The parameters
  *    INPUT:   min, max : The number of values (min <= num <= max)
- *    OUTPUT   <return> : Return the integer
+ *    OUTPUT   <return> : Return the integer/double
  ****************************************************************/
 int    random(int    min, int    max);
 double random(double min, double max);
+
 

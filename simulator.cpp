@@ -1,7 +1,7 @@
 /**********************************************************************
- * LAB 06
- * Bro Helfrich & Daniel & Matt
- * Lunar Lander simulation. This is the Game class and main()
+ * Airplane Simulator
+ * Matt Benson
+ * Airplane simulation. This is the Game class and main()
  **********************************************************************/
 
 #include "position.h"     // everything should have a point
@@ -12,14 +12,20 @@
 #include "test.h"         // for the unit tests
 #include <cmath>          // for SQRT
 #include <cassert>        // for ASSERT
-#include "star.h"         // for stars
-#include "lander.h"       // for lander
+#include "airplane.h"       // for lander
 #include "acceleration.h" // for acceleration
+#include "cloud.h"
 #include <vector>         // for star
 using namespace std;
 
 #define GRAVITY -1.625    // for acceleration
 #define TIME 0.1          // for speed of gameplay
+
+enum class GameState
+{
+   PLAYING,
+   PAUSED
+};
 
 /*************************************************************************
  * SIMULATOR
@@ -30,15 +36,17 @@ class Simulator
 public:
    // set up the simulator
    Simulator(const Position& posUpperRight)
-      : ground(posUpperRight), lander(posUpperRight)
+      : ground(posUpperRight), plane(posUpperRight)
    {
-      // Create stars
-      for (int i = 0; i < 50; i++)
-      {
-         Star star;
-         star.reset(posUpperRight.getX(), posUpperRight.getY());
-         stars.push_back(star);
-      }
+      clouds.push_back(Cloud(100, 850, 40));
+      clouds.push_back(Cloud(200, 900, 65));
+      clouds.push_back(Cloud(300, 950, 50));
+      clouds.push_back(Cloud(400, 850, 60));
+      clouds.push_back(Cloud(500, 900, 65));
+      clouds.push_back(Cloud(600, 850, 50));
+      clouds.push_back(Cloud(700, 850, 50));
+      clouds.push_back(Cloud(800, 900, 65));
+      clouds.push_back(Cloud(900, 820, 50));
    }
 
    // display stuff on the screen
@@ -50,11 +58,14 @@ public:
    // handle gameplay rules
    void gameplay(const Interface* pUI);
 
+   GameState getGameState() const { return gameState; }
+
 private:
    Ground ground;
-   Lander lander;
+   Airplane plane;
    Thrust thrust;
-   vector<Star> stars; // List of stars in the simulation
+   vector<Cloud> clouds;
+   GameState gameState = GameState::PLAYING;
 };
 
 /**********************************************************
@@ -65,43 +76,56 @@ void Simulator::display()
 {
    ogstream gout;
 
-   // draw 50 stars
-   for (auto& star : stars)
+   // Draw clouds first (in the sky)
+   for (const Cloud& cloud : clouds)
    {
-      star.draw(gout);
+      cloud.draw(gout);
    }
-   
-   // draw the ground
+
+   // draw the ground (runway with stripes)
    ground.draw(gout);
 
-   // draw the lander
-   lander.draw(thrust, gout);
+   // draw the control tower
+   gout.drawControlTower(Position(30.0, 250.0), 100.0);
 
-   gout = Position(20, 350);  // set position of messages
+   // draw the plane/lander
+   plane.draw(thrust, gout);
+
+   gout.setPosition(Position(20, 980));  // set position of messages
    gout.setf(ios::fixed);     // for double precision
-   
+
    // display the fuel, altitude, and speed
-   gout << "Fuel: "     << lander.getFuel()
-        << endl;
+   gout << "Fuel: " << plane.getFuel()
+      << endl;
    gout.precision(0);
-   gout << "Altitude: " << floor(ground.getElevation(lander.getPosition()))
-        << endl;
+   gout << "Altitude: " << floor(ground.getElevation(plane.getPosition()))
+      << endl;
    gout.precision(2);
-   gout << "Speed: "    << lander.getSpeed()
-        << endl;
+   gout << "Speed: " << plane.getSpeed()
+      << endl;
 
    // Display landing message
-   if (lander.isLanded())
+   if (plane.isLanded())
    {
-      gout = Position(190, 300);
+      gout.setPosition(Position(190, 300));
       gout << "The Eagle has landed! ";
    }
 
    // Display death message
-   if (lander.isDead())
+   if (plane.isDead())
    {
-      gout = Position(190, 300);
+      gout.setPosition(Position(190, 300));
       gout << "Houston, we have a problem... ";
+   }
+
+   if (gameState == GameState::PAUSED)
+   {
+      gout.setPosition(Position(350, 500));
+      gout << "=== MENU ===" << endl
+         << "P - Resume" << endl
+         << "R - Reset" << endl
+         << "Esc - Exit";
+      return; // Don't draw the rest while paused
    }
 }
 
@@ -111,16 +135,21 @@ void Simulator::display()
  **********************************************************/
 void Simulator::update(const Interface* pUI)
 {
-   // Update the thrust based on user input
+   // Get thrust/gravity acceleration
    thrust.set(pUI);
+   Acceleration a1 = plane.input(thrust, GRAVITY);
 
-   // Calculate the acceleration based on thrust, input, and gravity
-   Acceleration acceleration = lander.input(thrust, GRAVITY);
+   // Get aerodynamic acceleration
+   Acceleration a2 = plane.applyAerodynamics();
 
-   // Update the lander's position based on its acceleration and the time step
-   if (lander.isFlying())
+   // Combine the two
+   a1.addDDX(a2.getDDX());
+   a1.addDDY(a2.getDDY());
+
+   // Move the plane
+   if (plane.isFlying())
    {
-      lander.coast(acceleration, TIME);
+      plane.coast(a1, TIME);
    }
 }
 
@@ -132,36 +161,46 @@ void Simulator::update(const Interface* pUI)
 void Simulator::gameplay(const Interface* pUI)
 {
    // Check for collision with the ground
-   if (ground.hitGround(lander.getPosition(), lander.getWidth()))
+   if (ground.hitGround(plane.getPosition(), plane.getWidth()))
    {
-      lander.crash();
+      plane.crash();
    }
-   // Check for collision with the landing pad
-   else if (ground.onPlatform(lander.getPosition(), lander.getWidth()))
+   // Check for collision with the runway
+   else if (ground.onPlatform(plane.getPosition(), plane.getWidth()))
    {
       // If you land at a safe speed
-      if (lander.getSpeed() < lander.getMaxSpeed())
+      if (plane.getSpeed() < plane.getMaxSpeed())
       {
-         lander.land();
+         plane.land();
       }
       // If you land too fast
       else
       {
-         lander.crash();
+         plane.crash();
       }
    }
 
-   // Reset the game from anywhere by pressing space
-   if (pUI->isSpace())
+   if (pUI->isP())
+      Simulator::gameState = (gameState == GameState::PLAYING) ? GameState::PAUSED : GameState::PLAYING;
+
+   if (gameState == GameState::PAUSED)
    {
-      Position posUpperRight(400, 400);  
-      lander.reset(posUpperRight);
-      ground.reset();
-      for (auto& star : stars)
+      if (pUI->isR())
       {
-         star.reset(400, 400); 
+         plane.reset(Position(1000, 1000));
+         ground.reset();
+         gameState = GameState::PLAYING;
       }
+
+      if (pUI->isEsc())
+      {
+         exit(0); // Exit the simulator
+      }
+
+      return;
    }
+
+   
 }
 
 /*************************************
@@ -174,15 +213,17 @@ void callBack(const Interface* pUI, void* p)
    // is the first step of every single callback function in OpenGL. 
    Simulator* pSimulator = (Simulator*)p;
 
-   // Update the simulator state
-   pSimulator->update(pUI);
+   // Only update if not paused
+   if (pSimulator->getGameState() == GameState::PLAYING)
+   {
+      pSimulator->update(pUI);
+   }
 
-   // Check gameplay rules
    pSimulator->gameplay(pUI);
-
-   // Draw the updated game state
    pSimulator->display();
 }
+
+double Position::metersFromPixels = 40.0;
 
 /*********************************
  * Main is pretty sparse.  Just initialize
@@ -204,14 +245,20 @@ int main(int argc, char** argv)
    testRunner();
 
    // Initialize OpenGL
-   Position posUpperRight(400, 400);
-   Interface ui("Lunar Lander", posUpperRight);
+   Position ptUpperRight;
+   ptUpperRight.setZoom(1.0);
+   ptUpperRight.setPixelsX(1000.0);
+   ptUpperRight.setPixelsY(1000.0);
+   Interface ui(0, NULL,
+      "Airplane Simulator",   /* name on the window */
+      ptUpperRight);
 
    // Initialize the game class
-   Simulator simulator(posUpperRight);
+   Simulator simulator(ptUpperRight);
 
    // set everything into action
    ui.run(callBack, (void*)&simulator);
+
 
    return 0;
 }

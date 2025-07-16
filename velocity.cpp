@@ -2,7 +2,7 @@
  * Source File:
  *    VELOCITY
  * Author:
- *    Br. Helfrich
+ *    Matt Benson
  * Summary:
  *    Everything we need to know about speed
  ************************************************************************/ 

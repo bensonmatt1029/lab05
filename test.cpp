@@ -12,7 +12,6 @@
 #include "testVelocity.h"
 #include "testAngle.h"
 #include "testThrust.h"
-#include "testLander.h"
 
  // This code, and the similar IF_DEF in testRunner(), is to ensure that
  // you can see the text output (called the console window) and OpenGL's
@@ -45,5 +44,4 @@ void testRunner()
    TestVelocity().run();
    TestPosition().run();
    TestThrust().run();
-   TestLander().run();
 }

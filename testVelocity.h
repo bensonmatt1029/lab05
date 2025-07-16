@@ -2,7 +2,7 @@
  * Header File:
  *    TEST VELOCITY
  * Author:
- *    Br. Helfrich
+ *    Matt Benson
  * Summary:
  *    Unit tests for the Velocity class.
  ************************************************************************/

@@ -2,7 +2,7 @@
  * Header File:
  *    TEST THRUST
  * Author:
- *    Br. Helfrich
+ *    Matt Benson
  * Summary:
  *    All the unit tests for THRUST
  ************************************************************************/
@@ -392,8 +392,8 @@ private:
 
          // verify
          assertUnit(t.mainEngine == false);
-         assertUnit(t.clockwise == true);
-         assertUnit(t.counterClockwise == false);
+         assertUnit(t.clockwise == false);
+         assertUnit(t.counterClockwise == true);
          assertUnit(ui.isDownPress == 0);
          assertUnit(ui.isLeftPress == 1);
          assertUnit(ui.isRightPress == 0);
@@ -425,8 +425,8 @@ private:
 
          // verify
          assertUnit(t.mainEngine == false);
-         assertUnit(t.clockwise == false);
-         assertUnit(t.counterClockwise == true);
+         assertUnit(t.clockwise == true);
+         assertUnit(t.counterClockwise == false);
          assertUnit(ui.isDownPress == 0);
          assertUnit(ui.isLeftPress == 0);
          assertUnit(ui.isRightPress == 2);

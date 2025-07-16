@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{C4A2973A-F205-4BAD-81D9-D28F131C9DE4}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <ProjectName>Lab05</ProjectName>
+    <ProjectName>Aviation Simulator</ProjectName>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -107,8 +107,10 @@
   <ItemGroup>
     <ClCompile Include="acceleration.cpp" />
     <ClCompile Include="angle.cpp" />
+    <ClCompile Include="cloud.cpp" />
     <ClCompile Include="ground.cpp" />
-    <ClCompile Include="lander.cpp" />
+    <ClCompile Include="airplane.cpp" />
+    <ClCompile Include="physics.cpp" />
     <ClCompile Include="position.cpp" />
     <ClCompile Include="simulator.cpp" />
     <ClCompile Include="test.cpp" />
@@ -119,14 +121,14 @@
   <ItemGroup>
     <ClInclude Include="acceleration.h" />
     <ClInclude Include="angle.h" />
+    <ClInclude Include="cloud.h" />
     <ClInclude Include="ground.h" />
-    <ClInclude Include="lander.h" />
+    <ClInclude Include="airplane.h" />
+    <ClInclude Include="physics.h" />
     <ClInclude Include="position.h" />
-    <ClInclude Include="star.h" />
     <ClInclude Include="test.h" />
     <ClInclude Include="testAcceleration.h" />
     <ClInclude Include="testAngle.h" />
-    <ClInclude Include="testLander.h" />
     <ClInclude Include="testPosition.h" />
     <ClInclude Include="testThrust.h" />
     <ClInclude Include="testVelocity.h" />
@@ -135,9 +137,6 @@
     <ClInclude Include="uiInteract.h" />
     <ClInclude Include="unitTest.h" />
     <ClInclude Include="velocity.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

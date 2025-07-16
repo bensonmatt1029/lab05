@@ -2,7 +2,7 @@
  * Header File:
  *    Thrust : Represents activation of thrusters
  * Author:
- *    Br. Helfrich & Daniel & Matt
+ *    Matt Benson
  * Summary:
  *    down, clockwise, and counterclockwise
  ************************************************************************/
@@ -10,7 +10,6 @@
 #pragma once
 #include "uiInteract.h"  // for Interface
 
-class TestLander;
 class TestThrust;
 
  /*****************************************************
@@ -19,7 +18,6 @@ class TestThrust;
   *****************************************************/
 class Thrust
 {
-   friend TestLander;
    friend TestThrust;
    
 public:
@@ -48,8 +46,8 @@ public:
    void set(const Interface* pUI)
    {
      mainEngine       = pUI->isDown();
-     clockwise        = pUI->isLeft();
-     counterClockwise = pUI->isRight();
+     clockwise        = pUI->isRight();
+     counterClockwise = pUI->isLeft();
    }
 
 private:

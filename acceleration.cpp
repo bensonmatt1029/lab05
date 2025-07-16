@@ -2,7 +2,7 @@
  * Source File:
  *    ACCELERATION
  * Author:
- *    Br. Helfrich & Matt Benson
+ *    Matt Benson
  * Summary:
  *    Everything we need to know about changing speed
  ************************************************************************/
@@ -18,8 +18,8 @@
   *********************************************/
 void Acceleration::add(const Acceleration& acceleration)
 {
-    ddx += acceleration.getDDX();
-    ddy += acceleration.getDDY();
+   ddx += acceleration.getDDX();
+   ddy += acceleration.getDDY();
 }
 
 /*********************************************
@@ -28,6 +28,16 @@ void Acceleration::add(const Acceleration& acceleration)
  *********************************************/
 void Acceleration::set(const Angle& angle, double magnitude)
 {
-    ddx = magnitude * sin(angle.getRadians());
-    ddy = magnitude * cos(angle.getRadians());
+   ddx = magnitude * sin(angle.getRadians());
+   ddy = magnitude * cos(angle.getRadians());
+}
+
+/*********************************************
+ * ACCELERATION : SET
+ * set from acceleration and angle
+ *********************************************/
+void Acceleration::setAccelerationDirection(double acc, const Angle& angle)
+{
+   ddy = acc * cos(angle.getRadians());
+   ddx = acc * sin(angle.getRadians());
 }

@@ -2,7 +2,7 @@
  * Source File:
  *    ANGLE
  * Author:
- *    Br. Helfrich
+ *    Matt Benson
  * Summary:
  *    Everything we need to know about a direction
  ************************************************************************/
@@ -18,9 +18,9 @@ using namespace std;
   ************************************/
 double Angle::normalize(double radians) const
 {
-    double twoPi = 2 * M_PI;
+   double twoPi = 2 * M_PI;
 
-    return (radians)-floor((radians) / (twoPi)) * (twoPi);
+   return (radians)-floor((radians) / (twoPi)) * (twoPi);
 }
 
 /************************************
@@ -29,14 +29,14 @@ double Angle::normalize(double radians) const
   ************************************/
 void Angle::setRadians(double radians)
 {
-    if (radians <= 0 || radians >= (2 * M_PI))
-    {
-        this->radians = normalize(radians);
-    }
-    else
-    {
-        this->radians = radians;
-    }
+   if (radians <= 0 || radians >= (2 * M_PI))
+   {
+      this->radians = normalize(radians);
+   }
+   else
+   {
+      this->radians = radians;
+   }
 }
 
 /**********************************************
@@ -45,8 +45,8 @@ void Angle::setRadians(double radians)
   *********************************************/
 void Angle::setDegrees(double degrees)
 {
-    double r = (2 * M_PI) * (degrees / 360);
-    setRadians(r);
+   double r = (2 * M_PI) * (degrees / 360);
+   setRadians(r);
 }
 
 /**********************************************************
@@ -55,12 +55,20 @@ void Angle::setDegrees(double degrees)
   *********************************************************/
 Angle& Angle::add(double delta)
 {
-    radians += delta;
+   radians += delta;
 
-    if (radians <= 0 || radians >= (2 * M_PI))
-    {
-        radians = normalize(radians);
-    }
+   if (radians <= 0 || radians >= (2 * M_PI))
+   {
+      radians = normalize(radians);
+   }
 
-    return *this;
+   return *this;
+}
+
+/**********************************************************
+  * ANGLE : SET DXDY
+  *********************************************************/
+void Angle::setDxDy(double dx, double dy)
+{
+   radians = atan2(dx, dy);
 }
